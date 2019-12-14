@@ -1,0 +1,78 @@
+#include "StopWatch.h"
+#include "Arduino.h"
+//************ Set Time ************
+int Hour              = 0 ;
+int Min               = 0 ;
+int Sec               = 0 ;
+int MiliSec           = 0 ;
+hw_timer_t * timer = NULL;
+
+void IRAM_ATTR onTimer(){
+MiliSec++;
+  if(MiliSec == 100){
+    MiliSec = 0;
+    Sec++;
+    if(Sec == 60){
+      Sec = 0;
+      Min++;
+      if(Min == 60){
+        Min = 0;
+        Hour++;
+        if(Hour == 99){
+          Hour = 0;
+        }
+      }
+    }
+  }
+}
+StopWatch::StopWatch(){
+    timer = timerBegin(0, 80, true);  // timer 0, MWDT clock period = 12.5 ns * TIMGn_Tx_WDT_CLK_PRESCALE -> 12.5 ns * 80 -> 1000 ns = 1 us, countUp
+    timerAttachInterrupt(timer, &onTimer, true); // edge (not level) triggered 
+    timerAlarmWrite(timer, 10000, true); // 1000000 * 1 us = 1 s, autoreload true
+    timerAlarmDisable(timer); // SetTimer Disable,Enable    
+}
+
+void StopWatch::SetPin(int Pin_Start_Stop,int Pin_Reset){
+    pinMode(Pin_Start_Stop,INPUT_PULLUP);
+    pinMode(Pin_Reset,INPUT_PULLUP);
+}
+
+void StopWatch::Start(){
+    timerAlarmEnable(timer); // SetTimer Disable,Enable 
+}
+
+void StopWatch::Stop(){
+    timerAlarmDisable(timer); // SetTimer Disable,Enable 
+}
+
+void StopWatch::Reset(){
+    Hour        = 0 ;
+    Min         = 0 ;
+    Sec         = 0 ;
+    MiliSec     = 0 ;
+}
+
+int StopWatch::GetHour(){
+    return Hour ;   
+}
+int StopWatch::GetMin(){
+    return Min ;   
+}
+int StopWatch::GetSec(){
+    return Sec ;   
+}
+int StopWatch::GetMiliSec(){
+    return MiliSec ;   
+}
+
+void StopWatch::SerialPrint(){
+  Serial.print("Hour :");
+  Serial.print(Hour);
+  Serial.print(" Min :");
+  Serial.print(Min);
+  Serial.print(" Sec :");
+  Serial.print(Sec);
+  Serial.print(" MiliSec :");
+  Serial.print(MiliSec);
+  Serial.println("");
+  }

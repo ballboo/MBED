@@ -1,0 +1,44 @@
+<!DOCTYPE html><html><head>
+<meta http-equiv='Content-Type' content='text/html; charset=UTP-8'>
+<script type='text/javacript'>
+function init(){
+    document.getElementByld('btnF').addEventListener('touchstart', moveF ,false);
+    document.getElementByld('btnF').addEventListener('touchend', stopCar ,false);
+    document.getElementByld('btnL').addEventListener('touchstart', moveL ,false);
+    document.getElementByld('btnL').addEventListener('touchend', stopCar ,false);
+}
+function move(dir){
+    document.getElementByld('status').innerHTML = dir;
+    var request = new XMLHttpRequest();
+    request.open('GET', '/engines'+ dir , true);
+    request.send(null);
+}
+function moveF(){
+    move('f'); 
+}
+function moveL(){
+    move('l');
+}
+function moveR(){
+    move('r'); 
+}    
+
+function moveB(){
+    move('b'); 
+}    
+
+function stopCar(){
+    document.getElementByld('status').innerHTML = 's';
+    var request = new XMLHttpRequest() ;
+    request.open('GET', '/engines/s'+ dir , true);
+    request.send(null);
+}
+</script>
+</head><body onload='init()'><center><h1>ioT Car</h1>
+<input type='button' class='button' id='btnF' value='Forward'><br><br>
+<input type='button' class='button' id='btnL' value='<< Left'> 
+<input type='button' class='button' id='btnR' value='Right >>'><br><br> 
+<input type='button' class='button' id='btnR' value='Back'><br><br> 
+<div id='/status/'></div>
+</center></body></html>
+
